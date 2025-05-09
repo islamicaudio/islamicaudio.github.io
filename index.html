@@ -19,15 +19,15 @@
         }
 
         body.light {
-            --background: #fff;
+            --background: #f0f0f0;
             --text-color: #000;
-            --playlist-bg: #f0f0f0;
-            --player-bg: #fff;
+            --playlist-bg: rgba(255, 255, 255, 0.8);
+            --player-bg: rgba(255, 255, 255, 0.8);
             --button-color: #000;
             --progress-bg: #ccc;
             --progress-fill: #1db954;
-            --navbar-bg: #f0f0f0;
-            --menu-bg: #e0e0e0;
+            --navbar-bg: rgba(255, 255, 255, 0.8);
+            --menu-bg: rgba(255, 255, 255, 0.8);
         }
 
         * {
@@ -38,11 +38,15 @@
         }
 
         body {
-            background: var(--background);
+            background: radial-gradient(circle at top left, #121212 0%, #1e1e1e 50%, #2a2a2a 100%);
             color: var(--text-color);
             display: flex;
             flex-direction: column;
             height: 100vh;
+        }
+
+        body.light {
+            background: radial-gradient(circle at top left, #f0f0f0 0%, #e0e0e0 50%, #d0d0d0 100%);
         }
 
         .navbar {
@@ -55,29 +59,10 @@
             z-index: 1001;
         }
 
-        .logo {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: var(--text-color);
-            order: 1;
-        }
-
-        .hamburger {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 1.5em;
-            order: 2;
-        }
-
-        .menu {
-            order: 3;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 5px;
-            z-index: 1000;
-        }
+        .logo { order: 1; font-size: 1.5em; font-weight: bold; color: var(--text-color); }
+        .menu { order: 2; }
+        #theme-toggle { order: 3; background: none; border: none; color: var(--text-color); font-size: 1.5em; cursor: pointer; }
+        .hamburger { order: 4; display: none; background: none; border: none; color: var(--text-color); font-size: 1.5em; cursor: pointer; }
 
         .menu .main-menu {
             list-style: none;
@@ -98,20 +83,22 @@
 
         .menu .main-menu > li:hover > ul {
             display: flex;
+            flex-direction: row;
         }
 
         .mega-menu {
             display: none;
-            position: absolute;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 100vw;
             background: var(--menu-bg);
             padding: 20px;
             z-index: 1000;
-            width: 90vw;
-            max-width: 600px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 5px;
+            border-radius: 0;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-height: 70vh;
+            overflow-y: auto;
         }
 
         .mega-menu > li {
@@ -132,17 +119,31 @@
             text-decoration: none;
         }
 
-        .container {
-            display: flex;
-            flex: 1;
-            position: relative;
-            z-index: 1;
+        @media (max-width: 767px) {
+            .menu { display: none; }
+            .hamburger { display: block; }
+            .menu.active { display: block; position: absolute; top: 60px; left: 0; width: 100%; background: var(--menu-bg); padding: 10px; }
+            .menu.active .main-menu { flex-direction: column; gap: 10px; }
+            .mega-menu {
+                flex-direction: column;
+            }
+            .mega-menu > li {
+                flex: none;
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .hamburger { display: none; }
+        }
+
+        .main-content {
+            padding-bottom: 150px;
         }
 
         .playlist {
-            width: 300px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background: var(--playlist-bg);
             padding: 20px;
             overflow-y: auto;
             border-radius: 10px;
@@ -177,39 +178,28 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        .player {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+        .player-controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--player-bg);
             padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
         }
 
-        .current-track {
-            text-align: center;
-            margin-bottom: 30px;
+        .current-track-small {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
         }
 
-        .album-art {
-            width: 200px;
-            height: 200px;
-            border-radius: 10px;
-            margin: 0 auto 20px;
+        .small-album-art {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+            border-radius: 5px;
             object-fit: cover;
-            transition: transform 0.2s ease;
-        }
-
-        .album-art.playing {
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
         }
 
         .controls {
@@ -275,7 +265,6 @@
             border: none;
             color: var(--text-color);
             cursor: pointer;
-            display: none;
         }
 
         .fab {
@@ -301,64 +290,29 @@
             transform: scale(1.1);
         }
 
-        @media (min-width: 768px) {
-            .playlist:not(.hidden) {
-                display: block;
-            }
+        @media (max-width: 767px) {
+            .main-content { padding-bottom: 120px; }
+            .player-controls { padding: 10px; }
+            .current-track-small { margin-bottom: 5px; }
+            .small-album-art { width: 40px; height: 40px; }
+            .controls-buttons { gap: 10px; }
+            .play-pause { font-size: 1.5em; }
+            .fab { display: flex; }
         }
 
-        @media (max-width: 767px) {
-            .container {
-                flex-direction: column;
-            }
-            .player {
-                order: 1;
-            }
-            .playlist:not(.hidden) {
-                display: block;
-                width: 100%;
-                order: 2;
-            }
-            .hamburger {
-                display: block;
-            }
-            .menu {
-                display: none;
-                position: absolute;
-                top: 50px;
-                left: 0;
-                width: 100%;
-                background: var(--navbar-bg);
-                z-index: 1000;
-            }
-            .menu.active {
-                display: block;
-            }
-            .menu .main-menu {
-                flex-direction: column;
-            }
-            .mega-menu {
-                width: 100%;
-                left: 0;
-                transform: none;
-            }
-            .download-btn {
-                display: inline-block;
-            }
-            .album-art {
-                width: 150px;
-                height: 150px;
-            }
-            .fab {
-                display: flex;
-            }
+        body.light .navbar,
+        body.light .playlist,
+        body.light .player-controls,
+        body.light .mega-menu {
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="logo">My Music</div>
-        <button class="hamburger"><i class="fas fa-bars"></i></button>
         <div class="menu">
             <ul class="main-menu">
                 <li><a href="#">Home</a></li>
@@ -392,57 +346,45 @@
             </ul>
         </div>
         <button id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="hamburger"><i class="fas fa-bars"></i></button>
     </nav>
-    <div class="container">
+    <div class="main-content">
         <div class="playlist hidden" id="playlist">
-            <!-- Playlist heading and items will be populated by JavaScript -->
+            <!-- Playlist items populated by JS -->
         </div>
-        <div class="player">
-            <div class="current-track">
-                <img class="album-art" id="albumArt" src="https://picsum.photos/200">
-                <h2 id="trackTitle">Track Title</h2>
+    </div>
+    <div class="player-controls">
+        <div class="current-track-small">
+            <img class="small-album-art" id="albumArt" src="https://picsum.photos/200">
+            <div>
+                <h3 id="trackTitle">Track Title</h3>
                 <p id="trackArtist">Artist Name</p>
             </div>
-            <div class="controls">
-                <div class="progress-container" id="progressContainer">
-                    <div class="progress" id="progress"></div>
-                </div>
-                <div class="time-info">
-                    <span id="currentTime">0:00</span>
-                    <span id="duration">0:00</span>
-                </div>
-                <div class="controls-buttons">
-                    <button id="playlist-toggle"><i class="fas fa-list"></i></button>
-                    <button id="shuffle"><i class="fas fa-random"></i></button>
-                    <button id="prev"><i class="fas fa-step-backward"></i></button>
-                    <button class="play-pause" id="playPause"><i class="fas fa-play"></i></button>
-                    <button id="next"><i class="fas fa-step-forward"></i></button>
-                    <button id="repeat"><i class="fas fa-redo"></i></button>
-                </div>
-                <div class="volume-container">
-                    <i class="fas fa-volume-up"></i>
-                    <input type="range" id="volume" min="0" max="1" step="0.1" value="1">
-                </div>
-            </div>
+        </div>
+        <div class="progress-container" id="progressContainer">
+            <div class="progress" id="progress"></div>
+        </div>
+        <div class="time-info">
+            <span id="currentTime">0:00</span>
+            <span id="duration">0:00</span>
+        </div>
+        <div class="controls-buttons">
+            <button id="shuffle"><i class="fas fa-random"></i></button>
+            <button id="prev"><i class="fas fa-step-backward"></i></button>
+            <button class="play-pause" id="playPause"><i class="fas fa-play"></i></button>
+            <button id="next"><i class="fas fa-step-forward"></i></button>
+            <button id="repeat"><i class="fas fa-redo"></i></button>
+        </div>
+        <div class="volume-container">
+            <i class="fas fa-volume-up"></i>
+            <input type="range" id="volume" min="0" max="1" step="0.1" value="1">
         </div>
     </div>
     <button id="playlist-toggle-mobile" class="fab"><i class="fas fa-list"></i></button>
     <script>
         const tracks = [
-            {
-                title: "Sample Track 1",
-                artist: "Artist 1",
-                duration: "3:45",
-                file: "path/to/track1.mp3",
-                art: "https://picsum.photos/200"
-            },
-            {
-                title: "Sample Track 2",
-                artist: "Artist 2",
-                duration: "4:20",
-                file: "path/to/track2.mp3",
-                art: "https://picsum.photos/201"
-            }
+            { title: "Sample Track 1", artist: "Artist 1", duration: "3:45", file: "path/to/track1.mp3", art: "https://picsum.photos/200" },
+            { title: "Sample Track 2", artist: "Artist 2", duration: "4:20", file: "path/to/track2.mp3", art: "https://picsum.photos/201" }
         ];
 
         const audio = new Audio();
@@ -467,7 +409,6 @@
         const hamburger = document.querySelector('.hamburger');
         const menu = document.querySelector('.menu');
         const themeToggle = document.getElementById('theme-toggle');
-        const playlistToggle = document.getElementById('playlist-toggle');
         const playlistToggleMobile = document.getElementById('playlist-toggle-mobile');
 
         function initPlaylist() {
@@ -487,9 +428,7 @@
                     <button class="download-btn" data-file="${track.file}" data-title="${track.title}"><i class="fas fa-download"></i></button>
                 `;
                 div.addEventListener('click', (e) => {
-                    if (!e.target.closest('.download-btn')) {
-                        playTrack(index);
-                    }
+                    if (!e.target.closest('.download-btn')) playTrack(index);
                 });
                 div.querySelector('.download-btn').addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -502,6 +441,10 @@
                 });
                 playlistElement.appendChild(div);
             });
+
+            const p = document.createElement('p');
+            p.textContent = 'End of playlist.';
+            playlistElement.appendChild(p);
         }
 
         function playTrack(index) {
@@ -531,42 +474,22 @@
 
         audio.addEventListener('timeupdate', updateProgress);
         audio.addEventListener('ended', () => {
-            if (repeatMode === 2) {
-                playTrack(currentTrackIndex);
-            } else {
-                handleNext();
-            }
+            if (repeatMode === 2) playTrack(currentTrackIndex);
+            else handleNext();
         });
-        audio.addEventListener('play', () => {
-            albumArt.classList.add('playing');
-            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-        });
-        audio.addEventListener('pause', () => {
-            albumArt.classList.remove('playing');
-            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-        });
+        audio.addEventListener('play', () => playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>');
+        audio.addEventListener('pause', () => playPauseBtn.innerHTML = '<i class="fas fa-play"></i>');
 
-        playPauseBtn.addEventListener('click', () => {
-            if (audio.paused) {
-                audio.play();
-            } else {
-                audio.pause();
-            }
-        });
-
+        playPauseBtn.addEventListener('click', () => audio.paused ? audio.play() : audio.pause());
         prevBtn.addEventListener('click', () => {
             currentTrackIndex = currentTrackIndex > 0 ? currentTrackIndex - 1 : tracks.length - 1;
             playTrack(currentTrackIndex);
         });
-
         nextBtn.addEventListener('click', handleNext);
 
         function handleNext() {
-            if (isShuffle) {
-                currentTrackIndex = Math.floor(Math.random() * tracks.length);
-            } else {
-                currentTrackIndex = currentTrackIndex < tracks.length - 1 ? currentTrackIndex + 1 : 0;
-            }
+            if (isShuffle) currentTrackIndex = Math.floor(Math.random() * tracks.length);
+            else currentTrackIndex = currentTrackIndex < tracks.length - 1 ? currentTrackIndex + 1 : 0;
             playTrack(currentTrackIndex);
         }
 
@@ -576,37 +499,23 @@
             audio.currentTime = (clickX / width) * audio.duration;
         });
 
-        volumeSlider.addEventListener('input', (e) => {
-            audio.volume = e.target.value;
-        });
-
+        volumeSlider.addEventListener('input', (e) => audio.volume = e.target.value);
         shuffleBtn.addEventListener('click', () => {
             isShuffle = !isShuffle;
             shuffleBtn.style.color = isShuffle ? '#1db954' : 'var(--button-color)';
         });
-
         repeatBtn.addEventListener('click', () => {
             repeatMode = (repeatMode + 1) % 3;
             repeatBtn.style.color = repeatMode ? '#1db954' : 'var(--button-color)';
             repeatBtn.innerHTML = repeatMode === 2 ? '<i class="fas fa-redo-alt"></i>' : '<i class="fas fa-redo"></i>';
         });
 
-        hamburger.addEventListener('click', () => {
-            menu.classList.toggle('active');
-        });
-
+        hamburger.addEventListener('click', () => menu.classList.toggle('active'));
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('light');
             themeToggle.innerHTML = document.body.classList.contains('light') ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
         });
-
-        playlistToggle.addEventListener('click', () => {
-            playlistElement.classList.toggle('hidden');
-        });
-
-        playlistToggleMobile.addEventListener('click', () => {
-            playlistElement.classList.toggle('hidden');
-        });
+        playlistToggleMobile.addEventListener('click', () => playlistElement.classList.toggle('hidden'));
 
         document.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
@@ -617,6 +526,7 @@
 
         initPlaylist();
         playTrack(0);
+        if (window.innerWidth >= 768) playlistElement.classList.remove('hidden');
     </script>
 </body>
 </html>
