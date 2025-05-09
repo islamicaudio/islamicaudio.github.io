@@ -81,11 +81,6 @@
             display: block;
         }
 
-        .menu .main-menu > li:hover > ul {
-            display: flex;
-            flex-direction: row;
-        }
-
         .mega-menu {
             display: none;
             position: fixed;
@@ -99,6 +94,7 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             max-height: 70vh;
             overflow-y: auto;
+            transition: max-height 0.3s ease;
         }
 
         .mega-menu > li {
@@ -119,23 +115,52 @@
             text-decoration: none;
         }
 
+        @media (min-width: 768px) {
+            .menu .main-menu > li:hover > ul {
+                display: flex;
+                flex-direction: row;
+            }
+        }
+
         @media (max-width: 767px) {
             .menu { display: none; }
             .hamburger { display: block; }
             .menu.active { display: block; position: absolute; top: 60px; left: 0; width: 100%; background: var(--menu-bg); padding: 10px; }
             .menu.active .main-menu { flex-direction: column; gap: 10px; }
             .mega-menu {
+                display: none;
                 flex-direction: column;
+                position: relative;
+                top: 0;
+                left: 0;
+                width: 100%;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease, opacity 0.2s ease;
+                opacity: 0;
+            }
+            .mega-menu.expanded {
+                display: block;
+                max-height: 70vh;
+                opacity: 1;
+                overflow-y: auto;
             }
             .mega-menu > li {
                 flex: none;
                 width: 100%;
                 margin-bottom: 10px;
             }
-        }
-
-        @media (min-width: 768px) {
-            .hamburger { display: none; }
+            .menu .main-menu > li > a::after {
+                content: '\f107';
+                font-family: 'Font Awesome 5 Free';
+                font-weight: 900;
+                float: right;
+                margin-left: 10px;
+                transition: transform 0.3s ease;
+            }
+            .menu .main-menu > li > a.expanded::after {
+                transform: rotate(180deg);
+            }
         }
 
         .main-content {
@@ -499,7 +524,7 @@
             audio.currentTime = (clickX / width) * audio.duration;
         });
 
-        volumeSlider.addEventListener('input', (e) => audio.volume = e.target.value);
+        volumeSlider.addEventListener('click', (e) => audio.volume = e.target.value);
         shuffleBtn.addEventListener('click', () => {
             isShuffle = !isShuffle;
             shuffleBtn.style.color = isShuffle ? '#1db954' : 'var(--button-color)';
@@ -511,10 +536,12 @@
         });
 
         hamburger.addEventListener('click', () => menu.classList.toggle('active'));
+
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('light');
             themeToggle.innerHTML = document.body.classList.contains('light') ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
         });
+
         playlistToggleMobile.addEventListener('click', () => playlistElement.classList.toggle('hidden'));
 
         document.addEventListener('keydown', (e) => {
@@ -523,6 +550,29 @@
                 playPauseBtn.click();
             }
         });
+
+        // Mobile mega menu toggle with enhancements
+        if (window.innerWidth < 768) {
+            document.querySelectorAll('.menu .main-menu > li > a').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const megaMenu = link.nextElementSibling;
+                    if (megaMenu && megaMenu.classList.contains('mega-menu')) {
+                        e.preventDefault();
+                        const isExpanded = megaMenu.classList.contains('expanded');
+                        // Close all other mega menus
+                        document.querySelectorAll('.mega-menu.expanded').forEach(menu => {
+                            if (menu !== megaMenu) {
+                                menu.classList.remove('expanded');
+                                menu.previousElementSibling.classList.remove('expanded');
+                            }
+                        });
+                        // Toggle current mega menu
+                        megaMenu.classList.toggle('expanded');
+                        link.classList.toggle('expanded', !isExpanded);
+                    }
+                });
+            });
+        }
 
         initPlaylist();
         playTrack(0);
