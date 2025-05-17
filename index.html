@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotify-Style Music Player</title>
+    <title>Islamic Audio Player</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -170,6 +170,7 @@
         .playlist {
             background: var(--playlist-bg);
             padding: 20px;
+            padding-bottom: 100px;
             overflow-y: auto;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -337,10 +338,13 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo">My Music</div>
+        <div class="logo">Islamic Audio Player</div>
         <div class="menu">
             <ul class="main-menu">
-                <li><a href="#">Home</a></li>
+                <li><a href="#">Beautiful Quran</a></li>
+                
+                <li><a href="#">Your Library</a></li>
+                <li><a href="#">Search</a></li>
                 <li><a href="#">Browse</a>
                     <ul class="mega-menu">
                         <li>
@@ -366,8 +370,6 @@
                         </li>
                     </ul>
                 </li>
-                <li><a href="#">Your Library</a></li>
-                <li><a href="#">Search</a></li>
             </ul>
         </div>
         <button id="theme-toggle"><i class="fas fa-moon"></i></button>
@@ -408,8 +410,18 @@
     <button id="playlist-toggle-mobile" class="fab"><i class="fas fa-list"></i></button>
     <script>
         const tracks = [
-            { title: "Sample Track 1", artist: "Artist 1", duration: "3:45", file: "path/to/track1.mp3", art: "https://picsum.photos/200" },
-            { title: "Sample Track 2", artist: "Artist 2", duration: "4:20", file: "path/to/track2.mp3", art: "https://picsum.photos/201" }
+            { title: "1. Most Beautiful Quran", artist: "Different Qaris Worldwide", duration: "Long", file: "https://archive.org/download/Most-Beautiful-Quran-Recitation-Playlist-Audio-Quran-Mp3/01%20-Most%20Beautiful%20Quran%20-%20Arabic%20Only.mp3", art: "https://picsum.photos/200" },
+            { title: "1. Most Beautiful Quran  Worldwide", artist: "Various", duration: "Long", file: "https://archive.org/download/Most-Beautiful-Quran-Recitation-Playlist-Audio-Quran-Mp3/01%20-Most%20Beautiful%20Quran%20-%20Arabic%20Only.mp3", art: "https://picsum.photos/200" },
+            { title: "1. Most Beautiful Quran  Worldwide", artist: "Various", duration: "Long", file: "https://archive.org/download/Most-Beautiful-Quran-Recitation-Playlist-Audio-Quran-Mp3/01%20-Most%20Beautiful%20Quran%20-%20Arabic%20Only.mp3", art: "https://picsum.photos/200" },
+            { title: "Sample Track 2", artist: "Artist 2", duration: "4:20", file: "path/to/track2.mp3", art: "https://picsum.photos/201" },
+            { title: "Sample Track 2", artist: "Artist 2", duration: "4:20", file: "path/to/track2.mp3", art: "https://picsum.photos/201" },
+            { title: "Sample Track 2", artist: "Artist 2", duration: "4:20", file: "path/to/track2.mp3", art: "https://picsum.photos/201" },
+            { title: "Sample Track 2", artist: "Artist 2", duration: "4:20", file: "path/to/track2.mp3", art: "https://picsum.photos/201" },
+            { title: "Sample Track 2", artist: "Artist 2", duration: "4:20", file: "path/to/track2.mp3", art: "https://picsum.photos/201" },
+            { title: "Sample Track 2", artist: "Artist 2", duration: "4:20", file: "path/to/track2.mp3", art: "https://picsum.photos/201" },
+            { title: "Sample Track 2", artist: "Artist 2", duration: "4:20", file: "path/to/track2.mp3", art: "https://picsum.photos/201" },
+            { title: "Sample Track 2", artist: "Artist 2", duration: "4:20", file: "path/to/track2.mp3", art: "https://picsum.photos/201" },
+            { title: "1. Most Beautiful Quran - Arabic Only - Different Qaris Worldwide", artist: "Various", duration: "Long", file: "https://archive.org/download/Most-Beautiful-Quran-Recitation-Playlist-Audio-Quran-Mp3/01%20-Most%20Beautiful%20Quran%20-%20Arabic%20Only.mp3", art: "https://picsum.photos/200" },
         ];
 
         const audio = new Audio();
@@ -438,7 +450,7 @@
 
         function initPlaylist() {
             const h2 = document.createElement('h2');
-            h2.textContent = 'Playlist';
+            h2.textContent = 'Mp3 Online Quran Listen & Download Free';
             playlistElement.appendChild(h2);
 
             tracks.forEach((track, index) => {
@@ -468,7 +480,7 @@
             });
 
             const p = document.createElement('p');
-            p.textContent = 'End of playlist.';
+            p.textContent = 'Listen Online Beautiful Quran and Download Free, Do not forget to share this khair with others';
             playlistElement.appendChild(p);
         }
 
