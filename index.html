@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Islamic Audio Player - Quran Recitation, Islamic Lectures</title>
-    <meta name="description" content="World's best Islamic audio player featuring Quran recitations, Islamic lectures in English and Urdu, and Quran translations.">
-    <meta name="keywords" content="Islamic audio, Quran recitation, Islamic lectures, English, Urdu, Quran translation, audio player">
+    <title>Islamic Audio Player - Qur'an Recitation, Islamic Lectures</title>
+    <meta name="description" content="World's best Islamic audio player featuring Qur'an recitations, Islamic lectures in English and Urdu, and Qur'an translations.">
+    <meta name="keywords" content="Islamic audio, Qur'an recitation, Islamic lectures, English, Urdu, Qur'an translation, audio player">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -21,6 +21,8 @@
             --progress-bg: #333;
             --progress-fill: var(--primary-color);
             --hover-bg: rgba(255,255,255,0.1);
+            --modal-bg: rgba(0,0,0,0.85);
+            --selection-color: #2ecc71;
         }
 
         body.light-mode {
@@ -32,6 +34,18 @@
             --border: 1px solid rgba(0,0,0,0.05);
             --progress-bg: #e2e8f0;
             --hover-bg: rgba(0,0,0,0.03);
+            --modal-bg: rgba(255,255,255,0.95);
+            --selection-color: #27ae60;
+        }
+
+        /* Text selection styling */
+        ::selection {
+            background: var(--selection-color);
+            color: white;
+        }
+        ::-moz-selection {
+            background: var(--selection-color);
+            color: white;
         }
 
         * {
@@ -75,8 +89,31 @@
         }
 
         @keyframes float {
-            0% { transform: translateY(100vh); opacity: 0.4; }
-            100% { transform: translateY(-10vh); opacity: 0.1; }
+            0% {
+                transform: translateY(100vh);
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(-10vh);
+                opacity: 0.1;
+            }
+        }
+
+        /* Logo shine animation */
+        @keyframes logoShine {
+            0% { 
+                text-shadow: 0 0 0px rgba(29, 185, 84, 0.5); 
+            }
+            50% { 
+                text-shadow: 0 0 15px rgba(29, 185, 84, 0.8); 
+            }
+            100% { 
+                text-shadow: 0 0 0px rgba(29, 185, 84, 0.5); 
+            }
+        }
+
+        .logo.shine {
+            animation: logoShine 2s ease-in-out;
         }
 
         /* Header and Navigation */
@@ -98,13 +135,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            animation: glow 2s ease-in-out;
-        }
-
-        @keyframes glow {
-            0% { opacity: 0; text-shadow: 0 0 10px var(--primary-color); }
-            50% { opacity: 1; text-shadow: 0 0 20px var(--primary-color); }
-            100% { opacity: 1; text-shadow: none; }
         }
 
         .logo i {
@@ -118,90 +148,81 @@
             position: relative;
         }
 
-        /* Mega Menu */
-        .mega-menu {
-            position: relative;
-        }
-
-        .mega-menu-btn {
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 10px;
-            transition: all 0.3s;
-        }
-
-        .mega-menu-btn:hover,
-        .mega-menu-btn:focus {
-            color: var(--primary-color);
-        }
-
-        .mega-menu-content {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: var(--card-bg);
-            box-shadow: var(--shadow);
-            border-radius: 8px;
-            width: 80%;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow-y: auto;
-            padding: 20px;
-            z-index: 1000;
-        }
-
-        .mega-menu-content.active {
-            display: block;
-        }
-
-        .mega-menu-content a {
-            display: block;
-            padding: 8px 10px;
-            color: var(--text-color);
-            text-decoration: none;
-            font-size: 0.95rem;
-            border-radius: 4px;
-            transition: background-color 0.2s, color 0.2s;
-        }
-
-        .mega-menu-content a:hover,
-        .mega-menu-content a:focus {
-            background-color: var(--hover-bg);
-            color: var(--primary-color);
-        }
-
-        .overlay {
+        /* Modern Menu Modal */
+        .menu-modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
+            background: var(--modal-bg);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
-        .overlay.active {
+        .menu-modal.active {
             display: block;
         }
 
-        .close-btn {
+        .modal-content {
+            background: var(--card-bg);
+            max-width: 1000px;
+            margin: 40px auto;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 15px;
+            right: 15px;
             background: none;
             border: none;
-            font-size: 1.5rem;
             color: var(--text-color);
+            font-size: 1.8rem;
             cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            background: var(--hover-bg);
+            color: var(--primary-color);
+        }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .modal-grid a {
+            display: block;
+            padding: 12px 15px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: background-color 0.2s, color 0.2s;
+            background: rgba(0,0,0,0.05);
+        }
+
+        .modal-grid a:hover,
+        .modal-grid a:focus {
+            background-color: var(--hover-bg);
+            color: var(--primary-color);
         }
 
         /* Search Popup */
@@ -342,7 +363,7 @@
             }
         }
 
-        /* Playlist section */
+        /* Playlist section with scroll behavior */
         .playlist-section {
             flex: 1;
             background-color: var(--card-bg);
@@ -352,19 +373,45 @@
             max-width: 400px;
             display: flex;
             flex-direction: column;
+            height: calc(100vh - 20px);
+            overflow: hidden;
+        }
+
+        .playlist-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .playlist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        #playlist {
+            list-style: none;
+            overflow-y: auto;
+            flex: 1;
+            border-radius: 10px;
+            background-color: var(--bg-color);
+            scroll-behavior: smooth;
+            padding: 5px;
         }
 
         @media (max-width: 768px) {
             .playlist-section {
                 max-width: 100%;
+                height: auto;
+                max-height: 100vh;
             }
         }
 
         .section-title {
             font-size: 1.5rem;
-            margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 2px solid var(--primary-color);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -386,14 +433,6 @@
         .share-btn:hover,
         .share-btn:focus {
             color: var(--primary-color);
-        }
-
-        #playlist {
-            list-style: none;
-            overflow-y: auto;
-            flex: 1;
-            border-radius: 10px;
-            background-color: var(--bg-color);
         }
 
         #playlist li {
@@ -443,6 +482,8 @@
             font-size: 0.9rem;
             color: var(--secondary-text);
             margin-left: 10px;
+            min-width: 60px;
+            text-align: right;
         }
 
         .download-icon {
@@ -554,7 +595,7 @@
             opacity: 1;
         }
 
-        /* Control buttons */
+        /* Control buttons - ensure they remain round */
         .control-buttons {
             display: flex;
             justify-content: center;
@@ -685,12 +726,6 @@
         }
 
         /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .mega-menu-content {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
         @media (max-width: 480px) {
             .album-art {
                 width: 180px;
@@ -708,32 +743,12 @@
             .control-btn {
                 width: 45px;
                 height: 45px;
-                border-radius: 50%;
             }
             
             .control-btn.main {
                 width: 55px;
                 height: 55px;
-                border-radius: 50%;
             }
-            
-            .mega-menu-btn {
-                font-size: 0.9rem;
-            }
-
-            .mega-menu-content {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        ::selection {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        ::-moz-selection {
-            background-color: var(--primary-color);
-            color: white;
         }
     </style>
 </head>
@@ -741,7 +756,7 @@
     <div class="particles" id="particles"></div>
     
     <header>
-        <div class="logo">
+        <div class="logo" id="logo">
             <i class="fas fa-mosque"></i>
             <span>Islamic Audio Player</span>
         </div>
@@ -758,23 +773,59 @@
                     <div class="search-results" id="search-results"></div>
                 </div>
             </div>
-            <div class="mega-menu">
-                <button class="mega-menu-btn" aria-expanded="false" aria-controls="mega-menu-content">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
+            <button class="mega-menu-btn" id="menu-btn" aria-expanded="false" aria-controls="menu-modal">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
     </header>
 
+    <!-- Modern Menu Modal -->
+    <div class="menu-modal" id="menu-modal">
+        <div class="modal-content">
+            <button class="close-modal" id="close-modal" aria-label="Close menu">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="section-title" style="margin-bottom: 20px;">
+                <i class="fas fa-bars"></i> Islamic Content Menu
+            </h2>
+            <div class="modal-grid">
+                <a href="#quran-al-fatiha">Surah Al-Fatiha</a>
+                <a href="#quran-al-baqarah">Surah Al-Baqarah</a>
+                <a href="#quran-yasin">Surah Yasin</a>
+                <a href="#quran-ar-rahman">Surah Ar-Rahman</a>
+                <a href="#quran-al-mulk">Surah Al-Mulk</a>
+                <a href="#lecture-purpose">Purpose of Life</a>
+                <a href="#lecture-patience">Patience in Islam</a>
+                <a href="#tafsir-al-kahf">Tafsir Surah Al-Kahf</a>
+                <a href="#quran-al-ikhlas">Surah Al-Ikhlas</a>
+                <a href="#quran-an-nas">Surah An-Nas</a>
+                <a href="#lecture-taqwa">Taqwa in Islam</a>
+                <a href="#lecture-charity">Charity in Islam</a>
+                <a href="#quran-translation-en">Qur'an Translation (English)</a>
+                <a href="#quran-translation-ur">Qur'an Translation (Urdu)</a>
+                <a href="#lecture-ramadan">Ramadan Guidance</a>
+                <a href="#lecture-prayer">Importance of Salah</a>
+                <a href="#quran-al-kawthar">Surah Al-Kawthar</a>
+                <a href="#about-us">About Us</a>
+                <a href="#contact-us">Contact Us</a>
+                <a href="#donate">Donate</a>
+            </div>
+        </div>
+    </div>
+
     <div class="main-container">
         <div class="playlist-section">
-            <h2 class="section-title">
-                <i class="fas fa-list-music"></i> Quran & Lectures
-                <button class="share-btn" title="Share" aria-label="Share playlist">
-                    <i class="fas fa-share-alt"></i>
-                </button>
-            </h2>
-            <ul id="playlist"></ul>
+            <div class="playlist-container">
+                <div class="playlist-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-list-music"></i> Qur'an & Lectures
+                        <button class="share-btn" title="Share" aria-label="Share playlist">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
+                    </h2>
+                </div>
+                <ul id="playlist"></ul>
+            </div>
         </div>
 
         <div class="player-section">
@@ -832,33 +883,8 @@
     </div>
 
     <footer>
-        <p>© 2023 Islamic Audio Player | Experience the Beauty of Quran Recitation and Islamic Knowledge</p>
+        <p>© 2023 Islamic Audio Player | Experience the Beauty of Qur'an Recitation and Islamic Knowledge</p>
     </footer>
-
-    <div class="overlay" id="overlay"></div>
-    <div class="mega-menu-content" id="mega-menu-content">
-        <button class="close-btn" aria-label="Close menu">×</button>
-        <a href="#quran-al-fatiha">Surah Al-Fatiha</a>
-        <a href="#quran-al-baqarah">Surah Al-Baqarah</a>
-        <a href="#quran-yasin">Surah Yasin</a>
-        <a href="#quran-ar-rahman">Surah Ar-Rahman</a>
-        <a href="#quran-al-mulk">Surah Al-Mulk</a>
-        <a href="#lecture-purpose">Purpose of Life</a>
-        <a href="#lecture-patience">Patience in Islam</a>
-        <a href="#tafsir-al-kahf">Tafsir Surah Al-Kahf</a>
-        <a href="#quran-al-ikhlas">Surah Al-Ikhlas</a>
-        <a href="#quran-an-nas">Surah An-Nas</a>
-        <a href="#lecture-taqwa">Taqwa in Islam</a>
-        <a href="#lecture-charity">Charity in Islam</a>
-        <a href="#quran-translation-en">Quran Translation (English)</a>
-        <a href="#quran-translation-ur">Quran Translation (Urdu)</a>
-        <a href="#lecture-ramadan">Ramadan Guidance</a>
-        <a href="#lecture-prayer">Importance of Salah</a>
-        <a href="#quran-al-kawthar">Surah Al-Kawthar</a>
-        <a href="#about-us">About Us</a>
-        <a href="#contact-us">Contact Us</a>
-        <a href="#donate">Donate</a>
-    </div>
 
     <audio id="audio"></audio>
 
@@ -868,67 +894,68 @@
             { 
                 title: "Most Beautiful Quran", 
                 artist: "Many Qaris Worldwide", 
-                file: "https://archive.org/download/Most-Beautiful-Quran-Recitation-Playlist-Audio-Quran-Mp3/01%20-Most%20Beautiful%20Quran%20-%20Arabic%20Only.mp3"
+                file: "https://archive.org/download/Most-Beautiful-Quran-Recitation-Playlist-Audio-Quran-Mp3/01%20-Most%20Beautiful%20Quran%20-%20Arabic%20Only.mp3",
+                duration: "1:23:45"
             },
             { 
                 title: "Three Hours+ Mp3 Quran", 
                 artist: "Omar Hisham Al Arabi", 
-                file: "https://archive.org/download/quran-recitations-most-beautiful-200/Beautiful%20Quran%20Recitation%20-%20urdu%20islamic%20downloads%20dot%20wordpress%20dot%20com%20%285%29.mp3"
+                file: "https://archive.org/download/quran-recitations-most-beautiful-200/Beautiful%20Quran%20Recitation%20-%20urdu%20islamic%20downloads%20dot%20wordpress%20dot%20com%20%285%29.mp3",
+                duration: "3:05:22"
             },
             { 
                 title: "Warning for wrongdoers", 
                 artist: "Abdur Rahman Mossad", 
-                file: "https://archive.org/download/quran-recitations-most-beautiful-200/Beautiful%20Quran%20Recitation%20-%20urdu%20islamic%20downloads%20dot%20wordpress%20dot%20com%20%284%29.mp3"
+                file: "https://archive.org/download/quran-recitations-most-beautiful-200/Beautiful%20Quran%20Recitation%20-%20urdu%20islamic%20downloads%20dot%20wordpress%20dot%20com%20%284%29.mp3",
+                duration: "0:45:18"
             },
             { 
                 title: "Soft Quran Recitations", 
                 artist: "Abdur Rahman Mossad", 
-                file: "https://archive.org/download/quran-recitations-most-beautiful-200/Beautiful%20Quran%20Recitation%20-%20urdu%20islamic%20downloads%20dot%20wordpress%20dot%20com%20%283%29.mp3"
+                file: "https://archive.org/download/quran-recitations-most-beautiful-200/Beautiful%20Quran%20Recitation%20-%20urdu%20islamic%20downloads%20dot%20wordpress%20dot%20com%20%283%29.mp3",
+                duration: "1:15:07"
             },
             { 
                 title: "Beautiful Quran Recitations", 
                 artist: "Abdur Rahman Mossad", 
-                file: "https://archive.org/download/quran-recitations-most-beautiful-200/Beautiful%20Quran%20Recitation%20-%20urdu%20islamic%20downloads%20dot%20wordpress%20dot%20com%20%282%29.mp3"
+                file: "https://archive.org/download/quran-recitations-most-beautiful-200/Beautiful%20Quran%20Recitation%20-%20urdu%20islamic%20downloads%20dot%20wordpress%20dot%20com%20%282%29.mp3",
+                duration: "0:52:33"
             },
             { 
                 title: "Heart Touching Audio Quran", 
                 artist: "Hamza Boudib", 
-                file: "https://archive.org/download/hamza-boudib-beautiful-quran-recitation/Hamza%20Boudib%20Beautiful%20Quran%20Recitation.mp3"
+                file: "https://archive.org/download/hamza-boudib-beautiful-quran-recitation/Hamza%20Boudib%20Beautiful%20Quran%20Recitation.mp3",
+                duration: "2:18:45"
             },
             { 
                 title: "Long Quran Recitations", 
                 artist: "Omar Hisham Al Arabi", 
-                file: "https://archive.org/download/Most-Beautiful-Quran-Recitation-Playlist-Audio-Quran-Mp3/01%20-Most%20Beautiful%20Quran%20-%20Arabic%20Only.mp3"
+                file: "https://ia600700.us.archive.org/20/items/Most-Beautiful-Quran-Recitation-Playlist-Audio-Quran-Mp3/3%20-%20Omar%20Hisham%20Al%20Arabi%20-%20Mix.mp3",
+                duration: "1:43:22"
             },
             { 
                 title: "HQ Quran Recitations", 
                 artist: "Ameer Shamim", 
-                file: "https://ia600700.us.archive.org/20/items/Most-Beautiful-Quran-Recitation-Playlist-Audio-Quran-Mp3/1%20-%20Ameer%20Shamim%20Quran%20Recitation.mp3"
+                file: "https://ia600700.us.archive.org/20/items/Most-Beautiful-Quran-Recitation-Playlist-Audio-Quran-Mp3/1%20-%20Ameer%20Shamim%20Quran%20Recitation.mp3",
+                duration: "0:38:15"
             },
              { 
                 title: "Surah Yaseen", 
                 artist: "Qari Tareq Mohammed", 
-                file: "https://ia800700.us.archive.org/20/items/Most-Beautiful-Quran-Recitation-Playlist-Audio-Quran-Mp3/02-Surah%20Yaseen%20-%20Qari%20Tareq%20Mohammed.mp3"
+                file: "https://ia800700.us.archive.org/20/items/Most-Beautiful-Quran-Recitation-Playlist-Audio-Quran-Mp3/02-Surah%20Yaseen%20-%20Qari%20Tareq%20Mohammed.mp3",
+                duration: "0:22:45"
             },
              { 
                 title: "Surah Ale - Imran", 
                 artist: "Naif Al Faisal", 
-                file: "https://ia800700.us.archive.org/20/items/Most-Beautiful-Quran-Recitation-Playlist-Audio-Quran-Mp3/01-Surah%20Ali%20-%20Imran%20%28110-112%29%20By%20%20Naif%20Al%20Faisal%20%E1%B4%B4%E1%B4%B0.mp3"
+                file: "https://ia800700.us.archive.org/20/items/Most-Beautiful-Quran-Recitation-Playlist-Audio-Quran-Mp3/01-Surah%20Ali%20-%20Imran%20%28110-112%29%20By%20%20Naif%20Al%20Faisal%20%E1%B4%B4%E1%B4%B0.mp3",
+                duration: "0:18:30"
             },
              { 
-                title: "Long Quran Recitations", 
-                artist: "Omar Hisham Al Arabi", 
-                file: "https://archive.org/download/Most-Beautiful-Quran-Recitation-Playlist-Audio-Quran-Mp3/01%20-Most%20Beautiful%20Quran%20-%20Arabic%20Only.mp3"
-            },
-             { 
-                title: "Long Quran Recitations", 
-                artist: "Omar Hisham Al Arabi", 
-                file: "https://archive.org/download/Most-Beautiful-Quran-Recitation-Playlist-Audio-Quran-Mp3/01%20-Most%20Beautiful%20Quran%20-%20Arabic%20Only.mp3"
-            },
-             { 
-                title: "All Quran Recitations", 
+                title: "Quran Recitations", 
                 artist: "by Tariq Mohammed طارق محمد", 
-                file: "All Quran Recitations by Tariq Mohammed طارق محمد.mp3"
+                file: "All Quran Recitations by Tariq Mohammed طارق محمد.mp3",
+                duration: "4:15:22"
             }
         ];
 
@@ -956,25 +983,24 @@
         const searchResults = document.getElementById('search-results');
         const shareBtn = document.querySelector('.share-btn');
         const backToTop = document.getElementById('back-to-top');
-        const megaMenuBtn = document.querySelector('.mega-menu-btn');
-        const megaMenuContent = document.getElementById('mega-menu-content');
-        const overlay = document.getElementById('overlay');
-        const closeBtn = document.querySelector('.close-btn');
+        const menuBtn = document.getElementById('menu-btn');
+        const menuModal = document.getElementById('menu-modal');
+        const closeModal = document.getElementById('close-modal');
+        const logo = document.getElementById('logo');
 
         // Player state
         let currentTrackIndex = 0;
         let isPlaying = false;
         let isShuffle = false;
         let isRepeat = false;
-        let volume = 1.0;
-        let volumeStates = [1.0, 0.5, 0.0];
-        let currentVolumeState = 0;
+        let volume = 1.0; // Start at full volume
+        let volumeStates = [1.0, 0.5, 0.0]; // Full, half, mute
+        let currentVolumeState = 0; // Index for volumeStates
 
         // Initialize player
         async function initPlayer() {
+            // Populate playlist with dynamic duration
             for (let i = 0; i < islamicContent.length; i++) {
-                const duration = await getTrackDuration(islamicContent[i].file);
-                islamicContent[i].duration = formatTime(duration);
                 const li = document.createElement('li');
                 li.innerHTML = `
                     <div class="track-info">
@@ -995,27 +1021,25 @@
                 playlist.appendChild(li);
             }
 
+            // Set initial volume
             audio.volume = volume;
             volumeLevel.style.width = `${volume * 100}%`;
             updateVolumeIcon();
+
+            // Load theme preference
             loadThemePreference();
+
+            // Initialize particles
             initParticles();
+
+            // Show back to top button on scroll
             window.addEventListener('scroll', () => {
                 backToTop.classList.toggle('visible', window.scrollY > 300);
             });
-        }
-
-        // Get track duration dynamically
-        async function getTrackDuration(url) {
-            return new Promise((resolve) => {
-                const tempAudio = new Audio(url);
-                tempAudio.addEventListener('loadedmetadata', () => {
-                    resolve(tempAudio.duration);
-                });
-                tempAudio.addEventListener('error', () => {
-                    resolve(0);
-                });
-            });
+            
+            // Add logo shine effect on page load
+            logo.classList.add('shine');
+            setTimeout(() => logo.classList.remove('shine'), 2000);
         }
 
         // Play a track
@@ -1068,10 +1092,11 @@
 
         // Format time (seconds to hh:mm:ss)
         function formatTime(seconds) {
-            if (isNaN(seconds)) return "0:00:00";
+            if (isNaN(seconds)) return "0:00";
             const hours = Math.floor(seconds / 3600);
             const minutes = Math.floor((seconds % 3600) / 60);
             const secs = Math.floor(seconds % 60);
+            
             if (hours > 0) {
                 return `${hours}:${minutes < 10 ? '0' : ''}${minutes}:${secs < 10 ? '0' : ''}${secs}`;
             } else {
@@ -1185,7 +1210,7 @@
             volumeLevel.style.width = `${volume * 100}%`;
             updateVolumeIcon();
             volumeSlider.classList.add('active');
-            setTimeout(() => volumeSlider.classList.remove('active'), 2000);
+            setTimeout(() => volumeSlider.classList.remove('active'), 2000); // Hide slider after 2 seconds
         });
 
         volumeSlider.addEventListener('click', (e) => {
@@ -1195,6 +1220,7 @@
             audio.volume = volume;
             volumeLevel.style.width = `${volume * 100}%`;
             updateVolumeIcon();
+            // Update volume state to closest predefined state
             currentVolumeState = volume === 0 ? 2 : volume <= 0.5 ? 1 : 0;
         });
 
@@ -1203,60 +1229,22 @@
             volumeIcon.setAttribute('aria-label', volume === 0 ? 'Unmute volume' : 'Adjust volume');
         }
 
-        // Mega menu functionality
-        megaMenuBtn.addEventListener('click', () => {
-            const expanded = megaMenuBtn.getAttribute('aria-expanded') === 'true';
-            if (!expanded) {
-                megaMenuContent.classList.add('active');
-                overlay.classList.add('active');
-                megaMenuBtn.setAttribute('aria-expanded', 'true');
-                closeBtn.focus();
-            } else {
-                megaMenuContent.classList.remove('active');
-                overlay.classList.remove('active');
-                megaMenuBtn.setAttribute('aria-expanded', 'false');
-            }
+        // Menu modal functionality
+        menuBtn.addEventListener('click', () => {
+            menuModal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
         });
 
-        closeBtn.addEventListener('click', () => {
-            megaMenuContent.classList.remove('active');
-            overlay.classList.remove('active');
-            megaMenuBtn.setAttribute('aria-expanded', 'false');
-            megaMenuBtn.focus();
+        closeModal.addEventListener('click', () => {
+            menuModal.classList.remove('active');
+            document.body.style.overflow = ''; // Re-enable background scrolling
         });
 
-        overlay.addEventListener('click', () => {
-            megaMenuContent.classList.remove('active');
-            overlay.classList.remove('active');
-            megaMenuBtn.setAttribute('aria-expanded', 'false');
-        });
-
-        megaMenuContent.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                megaMenuContent.classList.remove('active');
-                overlay.classList.remove('active');
-                megaMenuBtn.setAttribute('aria-expanded', 'false');
-            });
-        });
-
-        megaMenuContent.addEventListener('keydown', (e) => {
-            const links = megaMenuContent.querySelectorAll('a');
-            const current = document.activeElement;
-            const currentIndex = Array.from(links).indexOf(current);
-            
-            if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                const nextIndex = (currentIndex + 1) % links.length;
-                links[nextIndex].focus();
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                const prevIndex = (currentIndex - 1 + links.length) % links.length;
-                links[prevIndex].focus();
-            } else if (e.key === 'Escape') {
-                megaMenuContent.classList.remove('active');
-                overlay.classList.remove('active');
-                megaMenuBtn.setAttribute('aria-expanded', 'false');
-                megaMenuBtn.focus();
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === menuModal) {
+                menuModal.classList.remove('active');
+                document.body.style.overflow = '';
             }
         });
 
@@ -1358,4 +1346,4 @@
         window.addEventListener('DOMContentLoaded', initPlayer);
     </script>
 </body>
-    </html>
+                        </html>
